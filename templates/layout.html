@@ -1,0 +1,98 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{%  block title %}{% endblock%}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'main/css/main.css' %}" >
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+</head>
+<body>
+<header>
+    <div id="header__fixed-window">
+       <p>Sign up and get 20% off to your first order. <b>Sign Up Now</b> </p> 
+            <img src="{% static 'main/img/Frame.png'%}" alt="">
+    </div>
+    <div class="header">
+        <nav class="header__container">
+              <h2>SHOP.CO</h2> 
+          <ul class="header__burger">
+               <li class=" text_underline_hover">Shop</li>
+            <li class=" text_underline_hover">On Sale</li>
+            <li class=" text_underline_hover">New Arrivals</li>
+            <li class=" text_underline_hover">Brands</li>
+        </ul>
+           
+            
+                <form role="search">
+            <input class="header__search" id="ksysha" type="search" placeholder="Search for products..." aria-label="Search">
+            </form>
+             <ul class="header__ikonki">
+                 <li><button id="korzina" class="button_none"><img class=" pointer" src="{% static 'main/img/Korzina.svg' %}" alt="" ></button></li>
+                 <li class="header__ikonki_flex"><a href="{% url "login" %}"><button id="profile" class="button_none"><img class='header__ikonki_flex_object pointer"' src="{% static 'main/img/Avatar.svg' %}" alt="" ></button></a></li>
+                </ul>
+            
+        </nav>
+    </div>
+</header>
+<dialog id="shop-js">
+    <h3>YOUR CART</h3>
+    <button id="cancel" class="bi bi-x-circle button_none"> </button>
+    <div class="dialog__container">
+    <div>
+        <img src="{% static 'main/img/Frame 33.png' %}" alt="image">
+        <p>Name of good </p>
+        <p>Size:10</p>
+        <p>Color:White</p>
+        <p>140$</p>
+    </div>
+     <div>
+        <img src="{% static 'main/img/Frame 34.png' %}" alt="image">
+        <p>Name of good </p>
+        <p>Size:10</p>
+        <p>Color:White</p>
+        <p>140$</p>
+    </div>
+     <div>
+        <img src="{% static 'main/img/Frame 35.png' %}" alt="image">
+       <p>Name of good </p>
+        <p>Size:10</p>
+        <p>Color:White</p>
+        <p>140$</p>
+    </div>
+        <button type="submit"  class="btn btn-dark">Buy Now</button>
+        </div>
+        
+</dialog>
+
+<dialog id="danya">
+    <div class="poisk-container">
+    <ul class="list">
+      {% for el in news %}
+          
+      <li>
+      <div>
+      <p> {{ el.name}} </p>
+          </div>
+      </li>
+          
+        {% endfor %}
+    </ul>
+    </div>
+</dialog>
+<main>
+    {%  block main%}
+    {%endblock%}
+</main>
+<aside>
+    {%block aside%}
+    {%endblock%}
+</aside>
+<footer>
+    {%block footer%}
+    {%endblock%}
+</footer>
+<script src="{% static 'main/js/main.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block title%}
+index
+{% endblock%}
+{% block main %}
+    <div class="main__block">
+      <img src="{% static 'main/img/Vector.png' %}" alt=''>
+        <h1>FIND CLOTHES <br>THAT MATCHES<br> YOUR STYLE</h1>
+        <div class="main__mem">
+        <p>Browse through our diverse range of meticulously crafted garments, designed to bring out your individuality and cater to your sense of style.</p>
+        </div>
+        <div class="main__zvezda"><img  src="{% static 'main/img/Vector.png' %}" alt=''></div>
+        <a href="{% url 'shop' %}"><button type="button">Shop Now</button></a>
+        <ul class="main__list-first-page">
+            <li>200+ <br>International Brands</li>
+            <li>2,000+ <br>High-Quality Products</li>
+            <li>30,000+ <br>Happy Customers</li>
+        </ul>
+    </div>
+    <div id="main__brands">
+        
+            <div><img src="{% static 'main/img/Group1.png' %}" alt=""></div>
+            <div><img src="{% static 'main/img/zara-logo-1 1.png' %}" alt=""></div>
+            <div><img src="{% static 'main/img/gucci-logo-1 1.png' %}" alt=""></div>
+            <div><img src="{% static 'main/img/prada-logo-1 1.png' %}" alt=""></div>
+            <div><img src="{% static 'main/img/Group.png' %}" alt=""></div>
+       
+    </div>
+{% endblock %}

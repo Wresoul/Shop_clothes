@@ -1,0 +1,24 @@
+{% extends 'layout.html' %}
+{% block title %}
+Shop
+{% endblock%}
+{% block main %}
+
+    <div class="goods__container">
+    {% for el in news %}
+        <div class="card card-warning" style="width: 18rem;">
+        {% if el.photo %}
+   <img src="{{ el.photo.url }}" class="card-img-top" >
+        {% else %}
+            <p><em>No image available for this news item.</em></p>
+    {% endif %}
+    <div class="card-body">
+<h5 class="card-title"> {{ el.name}} </h5>
+    <p class="card-text"> {{ el.rating }}</p>
+        <p class="card-text"><b> ${{ el.price }}</b></p>
+    </div>
+        </div>
+        {% endfor %}
+        </div>
+
+{% endblock %}
