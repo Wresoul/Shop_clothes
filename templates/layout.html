@@ -1,4 +1,6 @@
 {% load static %}
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,15 +24,34 @@
             <li class=" text_underline_hover">On Sale</li>
             <li class=" text_underline_hover">New Arrivals</li>
             <li class=" text_underline_hover">Brands</li>
+              <li class="nav-item dropdown ">
+                                <a class="nav-link dropdown-toggle text-white" href="#" role="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    Мой профиль
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item  text-white" href="{% url "users:profile" %}">Личный кабинет</a>
+                                    </li>
+                                    {% if user.is_admin or user.is_staff %}
+                                        <li><a class="dropdown-item  text-white" href="{% url "admin:index" %}">Админ панель</a></li>
+                                    {% endif %}
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li><a class="dropdown-item  text-white" href="{% url "users:logout" %}">Выйти</a></li>
+                                </ul>
+                            </li>
         </ul>
            
             
                 <form role="search">
-            <input class="header__search" id="ksysha" type="search" placeholder="Search for products..." aria-label="Search">
+            <input class="header__search" name="q" id="ksysha" type="search" placeholder="Search for products..." aria-label="Search">
             </form>
              <ul class="header__ikonki">
-                 <li><button id="korzina" class="button_none"><img class=" pointer" src="{% static 'main/img/Korzina.svg' %}" alt="" ></button></li>
-                 <li class="header__ikonki_flex"><a href="{% url "login" %}"><button id="profile" class="button_none"><img class='header__ikonki_flex_object pointer"' src="{% static 'main/img/Avatar.svg' %}" alt="" ></button></a></li>
+                 <li><button id="korzina" type="button" class="button_none"><img class=" pointer" src="{% static 'main/img/Korzina.svg' %}" alt="" >
+                     <span id="goods-in-cart-count">{{ carts.total_quantity }}</span>
+                 </button></li>
+                 <li class="header__ikonki_flex"><a href="{% url "users:login" %}"><button id="profile" class="button_none"><img class='header__ikonki_flex_object pointer"' src="{% static 'main/img/Avatar.svg' %}" alt="" ></button></a></li>
                 </ul>
             
         </nav>
@@ -40,30 +61,15 @@
     <h3>YOUR CART</h3>
     <button id="cancel" class="bi bi-x-circle button_none"> </button>
     <div class="dialog__container">
-    <div>
-        <img src="{% static 'main/img/Frame 33.png' %}" alt="image">
-        <p>Name of good </p>
-        <p>Size:10</p>
-        <p>Color:White</p>
-        <p>140$</p>
-    </div>
-     <div>
-        <img src="{% static 'main/img/Frame 34.png' %}" alt="image">
-        <p>Name of good </p>
-        <p>Size:10</p>
-        <p>Color:White</p>
-        <p>140$</p>
-    </div>
-     <div>
-        <img src="{% static 'main/img/Frame 35.png' %}" alt="image">
-       <p>Name of good </p>
-        <p>Size:10</p>
-        <p>Color:White</p>
-        <p>140$</p>
-    </div>
-        <button type="submit"  class="btn btn-dark">Buy Now</button>
+   <div class="modal-body">
+                <h3 class="text-center mb-4">Корзина</h3>
+                <div class="container" id="cart-items-container">
+                    <!-- Разметка корзины -->
+                    {% include "carts/includes/included_cart.html" %}
+                    <!-- Закончилась разметка корзины -->
+                </div>
         </div>
-        
+         </div>
 </dialog>
 
 <dialog id="danya">

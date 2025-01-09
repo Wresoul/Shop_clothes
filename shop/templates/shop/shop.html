@@ -1,23 +1,43 @@
 {% extends 'layout.html' %}
+{% load static %}
+{% load goods_tags %}
 {% block title %}
 Shop
 {% endblock%}
 {% block main %}
 
     <div class="goods__container">
-    {% for el in news %}
+    {% for el in goods %}
+<a href="{% url "shop:product" el.slug %}">
         <div class="card card-warning" style="width: 18rem;">
         {% if el.photo %}
-   <img src="{{ el.photo.url }}" class="card-img-top" >
+   <img src="{{ el.photo.url }}" alt="" class=card-img-top" >
         {% else %}
             <p><em>No image available for this news item.</em></p>
     {% endif %}
     <div class="card-body">
-<h5 class="card-title"> {{ el.name}} </h5>
+
+<h5 class="card-title product_id"> {{ el.name}} </h5>
+             <p class="product_id">id: {{ el.display_id }}</p>
     <p class="card-text"> {{ el.rating }}</p>
-        <p class="card-text"><b> ${{ el.price }}</b></p>
-    </div>
+        {% if product.discount %}
+                            <p class="card-text"><s>{{el.price}}</s> $</p>
+                            <p class="card-text"><strong>{{ el.sell_price }} $</strong></p>
+                            <span class="badge bg-warning text-dark">Скидка {{ el.discount }} %</span>
+                        {% else %}
+                            <p><strong>{{ el.price }} $</strong></p>
+                        {% endif %}
+     <a href="{% url "carts:cart_add" el.slug %}" class="btn add-to-cart"
+                        data-product-slug="{{ el.slug }}"
+   data-product-id="{{ el.id }}">
+                            {% csrf_token %}
+                            <img class="mx-1" src="{% static "main/img/cart-plus.svg" %}" alt="Catalog Icon"
+                                width="32" height="32">
+         </a>
+
+            </div>
         </div>
+        </a>
         {% endfor %}
         </div>
 

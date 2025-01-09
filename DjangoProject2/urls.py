@@ -22,9 +22,14 @@ from django.conf import settings
 
 urlpatterns = [
        path('admin/', admin.site.urls),
-       path('', include('main.urls')),
-       path('/shop/', include('shop.urls')),
-       path('/login/', include('users.urls')),
+       path('', include('main.urls', namespace='main')),
+       path('shop/', include('shop.urls', namespace='shop')),
+       path('users/', include('users.urls', namespace='users')),
+       path('orders/', include('orders.urls', namespace='orders')),
+       path('carts/', include('carts.urls', namespace='carts')),
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    #urlpatterns += [
+        #path("__debug__/", include("debug_toolbar.urls")),
+    #]
