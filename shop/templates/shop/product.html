@@ -8,7 +8,7 @@
         <div class="row">
             <!-- Миниатюры -->
             <div class="col-md-4">
-                <img src="{{ product.image.url }}"
+                <img src="{{ product.photo.url }}"
                     class="img-thumbnail" data-bs-toggle="modal" data-bs-target="#imageModal1">
             </div>
             <div class="col-md-4 ">
@@ -37,7 +37,7 @@
             <p class="card-text">Цена: <strong>{{ product.sell_price }} $</strong></p>
             <h5 class="card-title">{{ product.name }}</h5>
             <p class="card-text">{{ product.description }}</p>
-            <a href="{% url "carts:cart_add" %}" class="btn btn-dark add-to-cart"
+            <a href="{% url "carts:cart_add" 1 %}" class="btn btn-dark add-to-cart"
             data-product-id="{{ product.id }}">
             {% csrf_token %}
             Добавить в корзину</a>

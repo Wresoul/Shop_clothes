@@ -14,33 +14,37 @@
 <header>
     <div id="header__fixed-window">
        <p>Sign up and get 20% off to your first order. <b>Sign Up Now</b> </p> 
+            {% if request.user.is_authenticated %}
             <img src="{% static 'main/img/Frame.png'%}" alt="">
+            {% endif %}
     </div>
     <div class="header">
         <nav class="header__container">
-              <h2>SHOP.CO</h2> 
+              <h2>SHOP.CO</h2>
           <ul class="header__burger">
                <li class=" text_underline_hover">Shop</li>
             <li class=" text_underline_hover">On Sale</li>
             <li class=" text_underline_hover">New Arrivals</li>
             <li class=" text_underline_hover">Brands</li>
-              <li class="nav-item dropdown ">
-                                <a class="nav-link dropdown-toggle text-white" href="#" role="button"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    Мой профиль
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item  text-white" href="{% url "users:profile" %}">Личный кабинет</a>
-                                    </li>
-                                    {% if user.is_admin or user.is_staff %}
-                                        <li><a class="dropdown-item  text-white" href="{% url "admin:index" %}">Админ панель</a></li>
-                                    {% endif %}
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                    <li><a class="dropdown-item  text-white" href="{% url "users:logout" %}">Выйти</a></li>
-                                </ul>
-                            </li>
+              {% if request.user.is_authenticated %}
+                  <li class="nav-item dropdown text_underline_hover">
+                      <a class="nav-link dropdown-toggle text_underline_hover" href="{% url 'users:profile' %}" role="button"
+                         data-bs-toggle="dropdown" aria-expanded="false">
+                         <span class="dropdown-item text_underline_hover">Мой профиль</span>
+                      </a>
+                      <ul class="dropdown-menu">
+                          <li><a class="dropdown-item text_underline_hover" href="{% url 'users:profile' %}">Личный кабинет</a></li>
+                          {% if user.is_admin or user.is_staff %}
+                              <li><a class="dropdown-item text_underline_hover" href="{% url "admin:index" %}">Админ панель</a></li>
+                          {% endif %}
+                          <li>
+                              <hr class="dropdown-divider">
+                          </li>
+                          <li><a class="dropdown-item text_underline_hover" href="{% url "users:logout" %}">Выйти</a></li>
+                      </ul>
+                  </li>
+              {% endif %}
+
         </ul>
            
             
@@ -100,5 +104,6 @@
     {%endblock%}
 </footer>
 <script src="{% static 'main/js/main.js' %}"></script>
+<script src="{% static "main/js/bootstrap.bundle.min.js" %}"></script>
 </body>
 </html>

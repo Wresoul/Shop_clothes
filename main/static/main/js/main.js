@@ -104,13 +104,13 @@ $(document).ready(function () {
         e.preventDefault();
 
         // Берем элемент счетчика в значке корзины и берем оттуда значение
-        var goodsInCartCount = $("#goods-in-cart-count");
-        var cartCount = parseInt(goodsInCartCount.text() || 0);
+        let goodsInCartCount = $("#goods-in-cart-count");
+        let cartCount = parseInt(goodsInCartCount.text() || 0);
 
         // Получаем id корзины из атрибута data-cart-id
-        var cart_id = $(this).data("cart-id");
+        let cart_id = $(this).data("cart-id");
         // Из атрибута href берем ссылку на контроллер django
-        var remove_from_cart = $(this).attr("href");
+        let remove_from_cart = $(this).attr("href");
 
         // делаем post запрос через ajax не перезагружая страницу
         $.ajax({

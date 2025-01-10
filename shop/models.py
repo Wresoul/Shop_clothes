@@ -24,6 +24,7 @@ class Goods(models.Model):
 
     class Meta:
         db_table = 'product'
+        verbose_name = "Товар"
         verbose_name_plural = "Товары"
         ordering = ("id",)
 
