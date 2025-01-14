@@ -3,5 +3,5 @@ venv
 .vs
 db.sqlite3
 __pycache__
+
 .qodo
-.env
