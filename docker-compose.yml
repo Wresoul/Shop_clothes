@@ -5,6 +5,9 @@ volumes:
   static_data:
   media_data:
 
+networks:
+  dev:
+
 services:
   db:
     image: postgres:13.0-alpine
@@ -13,6 +16,8 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: always
+    networks:
+      - dev
 
   backend:
     build: ./backend
@@ -33,6 +38,8 @@ services:
                     python3 manage.py collectstatic --noinput &&
                     gunicorn bigcorp.wsgi:application --bind 0.0.0.0:8000 &&
                     stripe listen --forward-to localhost:8000/payment/webhook-stripe/"
+    networks:
+      - dev
 
   #redis:
     #image: redis:7.2.3-alpine
@@ -61,3 +68,5 @@ services:
     ports:
       - 80:80
     restart: always
+    networks:
+      - dev
