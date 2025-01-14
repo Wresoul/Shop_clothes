@@ -1,0 +1,25 @@
+{% load static %}
+{% load carts_tags %}
+{% user_carts request as carts %}
+
+<li><button id="korzina" type="button" class="button_none">
+    <span id="goods-in-cart-count">{{ carts.total_quantity }}</span>
+    <img class=" pointer" src="{% static 'main/img/Korzina.svg' %}" alt="" >
+                 </button></li>
+
+<!-- Разметка модального окна корзины -->
+<dialog id="shop-js">
+    <h3>YOUR CART</h3>
+    <button id="cancel" class="bi bi-x-circle button_none">
+    </button>
+    <div class="dialog__container">
+   <div class="modal-body">
+                <h3 class="text-center mb-4">Корзина</h3>
+                <div class="container" id="cart-items-container">
+                    <!-- Разметка корзины -->
+                    {% include "carts/includes/included_cart.html" %}
+                    <!-- Закончилась разметка корзины -->
+                </div>
+        </div>
+         </div>
+</dialog>
