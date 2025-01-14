@@ -143,11 +143,11 @@ STATICFILES_DIRS = [BASE_DIR / 'main/static']
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-INTERNAL_IPS = [
+#INTERNAL_IPS = [
     # ...
-    "77.223.100.17",
+    #"77.223.100.17",
     # ...
-]
+#]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
