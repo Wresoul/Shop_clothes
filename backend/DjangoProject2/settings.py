@@ -145,7 +145,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 INTERNAL_IPS = [
     # ...
-    "127.0.0.1",
+    "77.223.100.17",
     # ...
 ]
 
