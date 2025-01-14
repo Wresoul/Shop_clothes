@@ -55,15 +55,15 @@ def create_order(request):
                         cart_items.delete()
 
                         messages.success(request, 'Заказ оформлен!')
-                        return redirect('user:profile')
+                        return redirect('users:profile')
             except ValidationError as e:
                 messages.success(request, str(e))
-                return redirect('cart:order')
+                return redirect('carts:order')
     else:
         initial = {
-            'first_name': request.UserRegistrationForm.first_name,
-            'last_name': request.UserRegistrationForm.last_name,
-            }
+            'first_name': request.user.first_name if request.user.first_name else '',
+            'last_name': request.user.last_name if request.user.last_name else '',
+        }
 
         form = CreateOrderForm(initial=initial)
 

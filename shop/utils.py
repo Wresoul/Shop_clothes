@@ -1,4 +1,3 @@
-from django.db.models import Q
 from django.contrib.postgres.search import (
     SearchVector,
     SearchQuery,
@@ -14,7 +13,7 @@ def q_search(query):
     if query.isdigit() and len(query) <= 5:
         return Goods.objects.filter(id=int(query))
 
-    vector = SearchVector("name", "description")
+    vector = SearchVector("name")
     query = SearchQuery(query)
 
     result = (
@@ -31,12 +30,12 @@ def q_search(query):
             stop_sel="</span>",
         )
     )
-    result = result.annotate(
-        bodyline=SearchHeadline(
-            "description",
-            query,
-            start_sel='<span style="background-color: yellow;">',
-            stop_sel="</span>",
-        )
-    )
+    #result = result.annotate(
+        #bodyline=SearchHeadline(
+            #"description",
+            #query,
+            #start_sel='<span style="background-color: yellow;">',
+            #stop_sel="</span>",
+        #)
+    #)
     return result

@@ -58,6 +58,8 @@ $(document).ready(function () {
 
         // Получаем id товара из атрибута data-product-id
         var product_id = $(this).data("product-id");
+        console.log(product_id)
+
 
         // Из атрибута href берем ссылку на контроллер django
         var add_to_cart_url = $(this).attr("href");

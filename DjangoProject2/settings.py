@@ -10,10 +10,20 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 import os.path
+from datetime import timedelta
 from pathlib import Path
+import environ
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+ENV_DIR = Path(__file__).resolve().parent.parent.parent
+
+env = environ.Env()
+env.read_env(ENV_DIR / '.env')
+
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -129,7 +139,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR / 'main/static']
+STATICFILES_DIRS = [BASE_DIR / 'main/../main/static']
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -147,4 +157,19 @@ AUTH_USER_MODEL = 'users.User'
 LOGIN_URL = '/user/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
+#Stripe
+STRIPE_PUBLISHABLE_KEY = 'pk_test_51QgsIsDRyBnbS3whTvfEUtje7BGFYv9hLVhdnkbJCAgKUmdWKwvyg0aJcIcFYSaYs5XC0zDxElF3rnyoIx8qxdhG00SQ7eXYsq'
+STRIPE_SECRET_KEY = 'sk_test_51QgsIsDRyBnbS3whEVO8u0Z4t5zx9y2xms8OVrCQRhoQkH3oivSz99fA7GfwIQde7Ngz41ux4NEVt2BKQ4IXqpUK00HrwtjvfZ'
+STRIPE_API_VERSION = '2025-01-13'
+
+#Celery
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_RESULT_EXTENDED = True
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseScheduler'
+
+
+
 

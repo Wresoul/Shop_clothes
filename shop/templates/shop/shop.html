@@ -4,6 +4,9 @@
 {% block title %}
 Shop
 {% endblock%}
+{% block modal_cart %}
+{% include "includes/cart_button.html" %}
+{% endblock  %}
 {% block main %}
     <!-- Форма фильтров -->
     <div class="dropdown mb-2">
@@ -46,7 +49,12 @@ Shop
             <button type="submit" class="btn btn-primary mx-3 mt-3">Применить</button>
         </form>
     </div>
-
+{% if request.GET.q %}
+    <h3 class="mt-4">Результаты поиска по запросу {{ request.GET.q }}</h3>
+    {% if not goods %}
+        <h2 class="mt-4">По запросу ничего не найдено</h2>
+    {% endif %}
+    {% endif %}
      <!-- Карта товара -->
     <div class="goods__container">
     {% for el in goods %}
@@ -59,7 +67,15 @@ Shop
     {% endif %}
     <div class="card-body">
 
-<h5 class="card-title product_id"> {{ el.name}} </h5>
+<h5 class="card-title product_id">
+{% autoescape off %}
+                                {% if el.headline %}
+                                {{el.headline}}
+                                {% else %}
+                                {{ el.name }}
+                                {% endif %}
+                            {% endautoescape %}
+</h5>
              <p class="product_id">id: {{ el.display_id }}</p>
         {% if el.discount %}
                             <p class="card-text"><s>{{el.price}}</s> $</p>
@@ -69,13 +85,13 @@ Shop
                             <p><strong>{{ el.price }} $</strong></p>
                         {% endif %}
 
-     <a href="{% url "carts:cart_add" el.slug %}" class="btn add-to-cart"
+     <a href="{% url "carts:cart_add" %}" class="btn add-to-cart"
                         data-product-slug="{{ el.slug }}"
-   data-product-id="{{ el.id }}">
+   data-product-id="{{ el.id}}">
                             {% csrf_token %}
 
                             <img class="mx-1" src="{% static "main/img/cart-plus.svg" %}" alt="Catalog Icon"
-                                width="32" height="32">
+                                 width="32" height="32">
          </a>
 
             </div>

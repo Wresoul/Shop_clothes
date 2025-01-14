@@ -1,8 +1,5 @@
-from django.shortcuts import render
-
 # Create your views here.
 from django.http import JsonResponse
-from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from carts.models import Cart
 from carts.utils import get_user_carts
@@ -10,10 +7,11 @@ from carts.utils import get_user_carts
 from shop.models import Goods
 
 
-def cart_add(request, product_slug):
+def cart_add(request):
     product_id = request.POST.get("product_id")
 
-    product = Goods.objects.get(slug=product_slug)
+
+    product = Goods.objects.get(id=product_id)
 
     if request.user.is_authenticated:
         carts = Cart.objects.filter(user=request.user, product=product)
