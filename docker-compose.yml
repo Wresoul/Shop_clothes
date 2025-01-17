@@ -29,7 +29,6 @@ services:
       - /app/static:/var/www/html
     depends_on:
       - nginx
-    entrypoint: ""
     networks:
       - dev
 
