@@ -67,9 +67,12 @@ services:
       - static_data:/app/static
       - media_data:/app/media
       - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /etc/nginx/dhparam.pem:/etc/nginx/dhparam.pem:ro
     ports:
       - 8080:80
       - 8443:443
     restart: always
+    depends_on:
+      - backend
     networks:
       - dev
