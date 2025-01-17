@@ -65,7 +65,7 @@ services:
       - static_data:/app/static
       - media_data:/app/media
     ports:
-      - 8080:80
+      - 80:80
     restart: always
     networks:
       - dev
