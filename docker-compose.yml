@@ -21,6 +21,18 @@ services:
     networks:
       - dev
 
+  certbot:
+    image: certbot/certbot
+    container_name: shop.co-certbot
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+      - /app/static:/var/www/html
+    depends_on:
+      - nginx
+    entrypoint: ""
+    networks:
+      - dev
+
   backend:
     build: ./backend
     container_name: shop.co-backend
