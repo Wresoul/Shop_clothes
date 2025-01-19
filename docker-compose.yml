@@ -8,6 +8,7 @@ volumes:
 networks:
   dev:
     driver: bridge
+    name: shop_clothes_dev
 
 services:
   db:
