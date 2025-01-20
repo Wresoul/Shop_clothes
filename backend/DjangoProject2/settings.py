@@ -39,7 +39,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['77.223.100.17',
                  '127.0.0.1',
                  'localhost',
-                 'ksysha-one-love.ru',
+                 '.ksysha-one-love.ru',
                  'www.ksysha-one-love.ru',
                  'backend'
 
