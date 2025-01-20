@@ -44,7 +44,7 @@ ALLOWED_HOSTS = ['77.223.100.17',
                  'backend'
 
 ]
-
+CSRF_TRUSTED_ORIGINS = ['https://ksysha-one-love.ru','https://*.127.0.0.1']
 
 # Application definition
 
