@@ -7,6 +7,7 @@ volumes:
   certbot_conf:
   certbot_www:
 
+
 networks:
   dev:
     driver: bridge
@@ -70,8 +71,8 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
       - static_data:/app/static
       - media_data:/app/media
-      - certbot_conf:/etc/letsencrypt
-      - certbot_www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
     ports:
       - 80:80
       - 443:443
