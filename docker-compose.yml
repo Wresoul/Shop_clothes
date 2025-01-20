@@ -62,7 +62,6 @@ services:
     #command: celery -A bigcorp worker --loglevel=info --beat
 
   nginx:
-    image: nginx:latest
     container_name: shop.co-nginx
     volumes:
       - /etc/nginx/sites-enabled/default
