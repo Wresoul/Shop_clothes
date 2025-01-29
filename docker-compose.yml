@@ -51,6 +51,7 @@ services:
     container_name: shop.co-redis
     ports:
       - "6379:6379"
+    hostname: redis
     networks:
       - dev
     restart: unless-stopped
