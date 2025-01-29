@@ -1,4 +1,5 @@
 {% extends 'layout.html' %}
+{% load cache %}
 {% load static %}
 
 {% block title%}
@@ -22,13 +23,14 @@ index
             <li>30,000+ <br>Happy Customers</li>
         </ul>
     </div>
+    {% cache 600 main__brands %}
     <div id="main__brands">
-        
+
             <div><img src="{% static 'main/img/Group1.png' %}" alt=""></div>
             <div><img src="{% static 'main/img/zara-logo-1 1.png' %}" alt=""></div>
             <div><img src="{% static 'main/img/gucci-logo-1 1.png' %}" alt=""></div>
             <div><img src="{% static 'main/img/prada-logo-1 1.png' %}" alt=""></div>
             <div><img src="{% static 'main/img/Group.png' %}" alt=""></div>
-       
     </div>
+    {% endcache %}
 {% endblock %}

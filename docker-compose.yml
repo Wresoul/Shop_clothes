@@ -46,10 +46,14 @@ services:
     networks:
       - dev
 
-  #redis:
-    #image: redis:7.2.3-alpine
-    #container_name: bigcorp-redis
-    #restart: unless-stopped
+  redis:
+    image: redis:7.2.3-alpine
+    container_name: shop.co-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - dev
+    restart: unless-stopped
 
   #celery:
     #build: ./backend
