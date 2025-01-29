@@ -34,7 +34,7 @@ env.read_env(ENV_DIR / '.env')
 SECRET_KEY = 'django-insecure-3q7npl0dc4j$2nb-j0988&Ffdsce5MAx4cdsw(_)xhi$fy'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['77.223.100.17',
                  '127.0.0.1',
