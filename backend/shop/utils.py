@@ -4,9 +4,7 @@ from django.contrib.postgres.search import (
     SearchRank,
     SearchHeadline,
 )
-
 from shop.models import Goods
-
 
 
 def q_search(query):
@@ -30,12 +28,12 @@ def q_search(query):
             stop_sel="</span>",
         )
     )
-    #result = result.annotate(
-        #bodyline=SearchHeadline(
-            #"description",
-            #query,
-            #start_sel='<span style="background-color: yellow;">',
-            #stop_sel="</span>",
-        #)
-    #)
+    # result = result.annotate(
+    #     bodyline=SearchHeadline(
+    #         "description",
+    #         query,
+    #         start_sel='<span style="background-color: yellow;">',
+    #         stop_sel="</span>",
+    #     )
+    # )
     return result

@@ -4,11 +4,10 @@ from django.db.models import Prefetch
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse
-
 from carts.models import Cart
 from orders.models import Order, OrderItem
-
 from users.forms import ProfileForm, UserLoginForm, UserRegistrationForm
+
 
 # Create your views here.
 def login(request):
@@ -26,7 +25,8 @@ def login(request):
                 messages.success(request, f"{username}, Вы вошли в аккаунт")
 
                 if session_key:
-                    Cart.objects.filter(session_key=session_key).update(user=user)
+                    Cart.objects.filter(
+                        session_key=session_key).update(user=user)
 
                 redirect_page = request.POST.get('next', None)
                 if redirect_page and redirect_page != reverse('users:logout'):
@@ -56,7 +56,8 @@ def registration(request):
 
             if session_key:
                 Cart.objects.filter(session_key=session_key).update(user=user)
-            messages.success(request, f"{user.username}, Вы успешно зарегистрированы и вошли в аккаунт")
+            messages.success(request, f"{user.username}, "
+                                      f"Вы успешно зарегистрированы и вошли в аккаунт")
             return HttpResponseRedirect(reverse('main:index'))
     else:
         form = UserRegistrationForm()
@@ -71,7 +72,8 @@ def registration(request):
 @login_required
 def profile(request):
     if request.method == 'POST':
-        form = ProfileForm(data=request.POST, instance=request.user, files=request.FILES)
+        form = ProfileForm(data=request.POST,
+                           instance=request.user, files=request.FILES)
         if form.is_valid():
             form.save()
             messages.success(request, "Профайл успешно обновлен")

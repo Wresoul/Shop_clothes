@@ -1,4 +1,3 @@
-
 import re
 from django import forms
 
@@ -32,4 +31,3 @@ class CreateOrderForm(forms.Form):
             raise forms.ValidationError("Неверный формат номера")
 
         return data
-
