@@ -2,10 +2,12 @@ from django.contrib import admin
 from shop.models import Goods
 from shop.models import Categories
 
+
 @admin.register(Categories)
 class CategoriesAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
     list_display = ["name",]
+
 
 @admin.register(Goods)
 class ProductsAdmin(admin.ModelAdmin):
@@ -22,4 +24,3 @@ class ProductsAdmin(admin.ModelAdmin):
         ("price", "discount"),
         "quantity",
     ]
-

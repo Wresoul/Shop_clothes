@@ -10,11 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 import os.path
-from datetime import timedelta
-from pathlib import Path
 import environ
-
-
+from pathlib import Path
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -23,8 +20,6 @@ ENV_DIR = Path(__file__).resolve().parent.parent.parent
 
 env = environ.Env()
 env.read_env(ENV_DIR / '.env')
-
-
 
 
 # Quick-start development settings - unsuitable for production
@@ -42,9 +37,9 @@ ALLOWED_HOSTS = ['77.223.100.17',
                  '.ksysha-one-love.ru',
                  'www.ksysha-one-love.ru',
                  'backend'
+                ]
 
-]
-CSRF_TRUSTED_ORIGINS = ['https://ksysha-one-love.ru','https://*.127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ['https://ksysha-one-love.ru', 'https://*.127.0.0.1']
 
 # Application definition
 
@@ -54,6 +49,7 @@ INSTALLED_APPS = [
     'users',
     'orders',
     'carts',
+    'broker'
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -62,6 +58,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.postgres',
     "debug_toolbar",
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -72,8 +69,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
-     "debug_toolbar.middleware.DebugToolbarMiddleware",
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'DjangoProject2.urls'
@@ -159,11 +155,11 @@ STATICFILES_DIRS = [BASE_DIR / 'staticfiles']
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-#INTERNAL_IPS = [
-    # ...
-    #"77.223.100.17",
-    # ...
-#]
+# INTERNAL_IPS = [
+#     ...
+#     "77.223.100.17",
+#     ...
+# ]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -174,14 +170,9 @@ LOGIN_URL = '/user/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
-#Stripe
+# Stripe
 STRIPE_PUBLISHABLE_KEY = env('STRIPE_PUBLISHABLE_KEY')
 STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
 STRIPE_API_VERSION = env('STRIPE_API_VERSION')
 
-#Celery
-
-
-
-
-
+# Celery

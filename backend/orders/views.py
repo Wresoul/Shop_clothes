@@ -3,9 +3,7 @@ from django.contrib import messages
 from django.db import transaction
 from django.forms import ValidationError
 from django.shortcuts import redirect, render
-
 from carts.models import Cart
-
 from orders.forms import CreateOrderForm
 from orders.models import Order, OrderItem
 
@@ -31,11 +29,10 @@ def create_order(request):
                         )
                         # Создать заказанные товары
                         for cart_item in cart_items:
-                            product=cart_item.product
-                            name=cart_item.product.name
-                            price=cart_item.product.sell_price()
-                            quantity=cart_item.quantity
-
+                            product = cart_item.product
+                            name = cart_item.product.name
+                            price = cart_item.product.sell_price()
+                            quantity = cart_item.quantity
 
                             if product.quantity < quantity:
                                 raise ValidationError(f'Недостаточное количество товара {name} на складе\
@@ -73,4 +70,3 @@ def create_order(request):
         'orders': True,
     }
     return render(request, 'orders/create_order.html', context=context)
-

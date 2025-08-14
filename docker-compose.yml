@@ -93,3 +93,48 @@ services:
     networks:
       - dev
 
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
+      KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      CLUSTER_ID: abc123def456  # Replace with UUID
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+    volumes:
+      - kafka_data:/tmp/kraft-combined-logs
+      - ./server.properties:/etc/message-processor/server.properties  # Optional
+    networks:
+      - dev
+
+  mongodb:
+    image: mongodb/community-server:7.0-ubi
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+      -
+  connect:
+    image: confluentinc/cp-kafka-connect:latest
+    ports:
+      - "8083:8083"
+    environment:
+      CONNECT_BOOTSTRAP_SERVERS: 'message-processor:9092'
+      CONNECT_REST_ADVERTISED_HOST_NAME: 'connect'
+      CONNECT_GROUP_ID: 'connect-group'
+      CONNECT_CONFIG_STORAGE_TOPIC: 'connect-configs'
+      CONNECT_OFFSET_STORAGE_TOPIC: 'connect-offsets'
+      CONNECT_STATUS_STORAGE_TOPIC: 'connect-status'
+      CONNECT_KEY_CONVERTER: 'org.apache.message-processor.connect.json.JsonConverter'
+      CONNECT_VALUE_CONVERTER: 'org.apache.message-processor.connect.json.JsonConverter'
+      CONNECT_PLUGIN_PATH: '/usr/share/java,/usr/share/confluent-hub-components'
+    depends_on:
+      - kafka
+      - mongodb

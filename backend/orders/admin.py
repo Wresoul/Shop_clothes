@@ -1,8 +1,5 @@
-
 from django.contrib import admin
-
 from orders.models import Order, OrderItem
-
 
 
 class OrderItemTabulareAdmin(admin.TabularInline):
@@ -18,7 +15,6 @@ class OrderItemTabulareAdmin(admin.TabularInline):
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
     list_display = "order", "product", "name", "price", "quantity"
-
 
 
 class OrderTabulareAdmin(admin.TabularInline):
@@ -64,4 +60,3 @@ class OrderAdmin(admin.ModelAdmin):
         "is_paid",
     )
     inlines = (OrderItemTabulareAdmin,)
-
