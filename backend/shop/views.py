@@ -15,7 +15,7 @@ class StandardResultsSetPagination(PageNumberPagination):
 
 # API ViewSets
 class CategoryViewSet(viewsets.ModelViewSet):
-    queryset = Categories.objects.all()
+    queryset = Categories.objects.all().order_by('id')
     serializer_class = CategorySerializer
     lookup_field = 'slug'
 
