@@ -4,7 +4,7 @@ from django.contrib.postgres.search import (
     SearchRank,
     SearchHeadline,
 )
-from shop.models import Goods
+from .models import Goods
 
 
 def q_search(query):
