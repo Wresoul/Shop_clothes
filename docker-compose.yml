@@ -1,11 +1,11 @@
-
-
 volumes:
   postgres_data:
   static_data:
   media_data:
   certbot_conf:
   certbot_www:
+  kafka_data:
+  mongo_data:
 
 
 networks:
@@ -45,6 +45,8 @@ services:
                     gunicorn DjangoProject2.wsgi:application --bind 0.0.0.0:8000"
     networks:
       - dev
+    environment:
+      - PYTHONUNBUFFERED=1
 
   redis:
     image: redis:7.2.3-alpine
@@ -100,19 +102,19 @@ services:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: broker,controller
       KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
-      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
       KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      CLUSTER_ID: abc123def456  # Replace with UUID
+      CLUSTER_ID: XyMqftPCQOqj9jFYtEIm5Q
     ports:
       - "9092:9092"
       - "9093:9093"
     volumes:
       - kafka_data:/tmp/kraft-combined-logs
-      - ./server.properties:/etc/message-processor/server.properties  # Optional
     networks:
       - dev
+
 
   mongodb:
     image: mongodb/community-server:7.0-ubi
@@ -120,7 +122,22 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
-      -
+    networks:
+      - dev
+
+
+  message-processor:
+    build:
+      context: ./message-processor
+    depends_on:
+      - kafka
+      - mongodb
+    environment:
+      - PYTHONUNBUFFERED=1
+    networks:
+      - dev
+
+
   connect:
     image: confluentinc/cp-kafka-connect:latest
     ports:

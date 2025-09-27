@@ -1,9 +1,22 @@
 # Create your views here.
 from django.http import JsonResponse
 from django.template.loader import render_to_string
+from rest_framework import viewsets, filters
+from rest_framework.permissions import IsAuthenticated
 from carts.models import Cart
 from carts.utils import get_user_carts
 from shop.models import Goods
+from .serializers import CartSerializer
+
+
+class CartViewSet(viewsets.ModelViewSet):
+    queryset = Cart.objects.all()
+    serializer_class = CartSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Пользователь видит только свою корзину
+        return Cart.objects.filter(user=self.request.user)
 
 
 def cart_add(request):
