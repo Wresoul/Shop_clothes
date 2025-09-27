@@ -18,6 +18,20 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
+from rest_framework.routers import DefaultRouter
+from users.views import UserViewSet
+from shop.views import GoodsViewSet, CategoryViewSet
+from carts.views import CartViewSet
+from orders.views import OrderViewSet
+
+
+router = DefaultRouter()
+router.register(r'users', UserViewSet, basename='user')
+router.register(r'goods', GoodsViewSet, basename='goods')
+router.register(r'shop-categories', CategoryViewSet, basename='category')
+router.register(r'orders', OrderViewSet, basename='order')
+router.register(r'carts', CartViewSet, basename='cart')
+# Уникальный префикс
 
 urlpatterns = [
        path('admin/', admin.site.urls),
@@ -26,6 +40,7 @@ urlpatterns = [
        path('users/', include('users.urls', namespace='users')),
        path('orders/', include('orders.urls', namespace='orders')),
        path('carts/', include('carts.urls', namespace='carts')),
+       path('api/', include(router.urls)),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,

@@ -3,9 +3,27 @@ from django.contrib import messages
 from django.db import transaction
 from django.forms import ValidationError
 from django.shortcuts import redirect, render
+from rest_framework import viewsets, filters
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from carts.models import Cart
 from orders.forms import CreateOrderForm
 from orders.models import Order, OrderItem
+from .serializers import OrderSerializer
+
+
+
+class OrderViewSet(viewsets.ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['phone_number', 'status']
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Пользователь видит только свои заказы, админ — все
+        if self.request.user.is_staff:
+            return Order.objects.all()
+        return Order.objects.filter(user=self.request.user)
 
 
 @login_required

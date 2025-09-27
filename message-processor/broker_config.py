@@ -1,17 +1,17 @@
-from confluent_kafka import Producer, Consumer, KafkaError
+# message-processor/broker_config.py
 import json
-from pymongo import MongoClient
+import os
+from confluent_kafka import Producer, Consumer, KafkaError
+from .mongo_utils import get_mongo_collection
+from dotenv import load_dotenv
 from datetime import datetime
 
-def get_mongo_client():
-    client = MongoClient('mongodb://localhost:27017/')
-    db = client['kafka_db']
-    collection = db['messages']
-    return collection
+
+load_dotenv('/Users/daniilradin/PycharmProjects/DjangoProject2/.env')
 
 def get_producer_config():
     return {
-        'bootstrap.servers': 'localhost:9092',
+        'bootstrap.servers': os.getenv('KAFKA_BOOTSTRAP_SERVERS'),
         'client.id': 'python-producer',
         'acks': 1,
         'retries': 5,
@@ -22,7 +22,7 @@ def get_producer_config():
 
 def get_consumer_config(group_id):
     return {
-        'bootstrap.servers': 'localhost:9092',
+        'bootstrap.servers': os.getenv('KAFKA_BOOTSTRAP_SERVERS'),
         'group.id': group_id,
         'auto.offset.reset': 'earliest',
         'enable.auto.commit': False,
@@ -70,8 +70,8 @@ def consume_messages(consumer, collection):
                 print(f"Failed to save to MongoDB: {e}")
 
 if __name__ == "__main__":
-    topic = "test-topic"
-    mongo_collection = get_mongo_client()
+    topic = os.getenv('KAFKA_TOPIC')
+    mongo_collection = get_mongo_collection()
     producer = create_producer()
     send_message(producer, topic, {"key": "value"})
     send_message(producer, topic, {"key": "error"})
