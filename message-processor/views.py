@@ -2,8 +2,8 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
 from bson import ObjectId
-from .mongo_utils import get_mongo_collection
-from .serializers import MessageSerializer
+from mongo_utils import get_mongo_collection
+from backend.broker.serializers import MessageSerializer
 
 class MessageViewSet(viewsets.ViewSet):
     def get_collection(self):
