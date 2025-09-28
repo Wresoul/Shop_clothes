@@ -1,0 +1,351 @@
+@import url("https://api.fontshare.com/v2/css?f[]=satoshi@300&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+/* ДЛЯ ПОСТАНОВКИ ИМЕННО БЛОКОВ div КАК ТЕБЕ УГОДНО ИСПОЛЬЗУЙ Display:flex
+Идеально подходит для создание допустим каталога со всеми товарами*/
+* {
+    margin:0;
+    padding:0;
+    cursor: default;
+    list-style: none;
+    font-family: 'Satoshi', sans-serif;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+img,svg,video{
+    display:inline-block;
+    vertical-align: top;
+
+}
+h1, h2, h3 {
+    font-weight:900;
+    font-family: "Inter", sans-serif;
+}
+
+#header__fixed-window {
+    float:left;
+    position: fixed;
+    width: 1440px;
+    height: 38px;
+    background: #000000;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+    font-family: 'Satoshi', sans-serif;
+    font-size: 14px;
+    line-height: 19px;
+    text-align: left;
+    padding-top: 9px;
+    z-index:10;
+
+
+
+    color: #FFFFFF;
+}
+
+#header__fixed-window b {
+    text-decoration: underline;
+}
+#header__fixed-window p {
+    padding-left: 544px;
+    display: inline;
+
+}
+#header__fixed-window img {
+    z-index:1;
+    display: inline;
+    margin-left: 404px;
+}
+.header {
+    background-color: #FFFFFF;
+    width: 100%;
+    height: 134px;
+
+}
+.main__block {
+    background-color: rgba(242, 240, 241, 1);
+    width: 100%;
+    height: 663px;
+    background-image: url("../img/Rectangle 2.png");
+}
+nav li {
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+
+}
+.header__burger {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 24px;
+    width: 321px;
+    height: 22px;
+    font-size: 16px;
+    z-index: 1;
+    margin-top:150px;
+}
+.text_underline_hover {
+        background-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent 90%,
+    hotpink 90%,
+    hotpink 100%,
+    );
+    background-repeat: no-repeat;
+    background-size: 0 100%;
+    background-position-x: right;
+
+    transition: background-size 300ms;
+}
+
+
+.text_underline_hover:hover {
+    background-size: 100% 100%;
+    background-position-x: left;
+    cursor:pointer
+}
+nav h2 {
+    align-items:flex-start;
+    display: flex;
+    flex-direction: row;
+    width: 160px;
+    height: 22px;
+    margin-top:130px;
+}
+
+
+.header__search {
+    margin-top: 135px;
+    width: 577px;
+    align-items: flex-start;
+    padding: 12px 16px;
+    gap: 12px;
+    height: 48px;
+    background: #F0F0F0;
+    border-radius: 62px;
+    unicode-bidi: isolate;
+}
+.header__search:hover {
+    cursor: text;
+}
+.header__search:focus {
+    outline: 2px solid brown;
+}
+.header__container {
+    width: 1440px;
+    height: 48px;
+    margin-left: 20px;
+    margin-right: 100px;
+    place-items: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    background-position: center;
+}
+.hide {
+    display:none;
+}
+.header__ikonki {
+    margin-top: 150px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 14px;
+    width: 62px;
+    height: 24px;
+    margin-left: 30px;
+
+}
+.pointer:hover {
+    cursor: pointer;
+}
+.header__ikonki_flex {
+    perspective: 60rem;
+}
+.header__ikonki_flex_object {
+    transition:
+    rotate 600ms, scale 1s;
+}
+.header__ikonki_flex:hover .header__ikonki_flex_object {
+    rotate: y 0.5turn;
+    scale: 1.2;
+    cursor: pointer;
+}
+#shop-js {
+    background-color: #FFFFFF;
+    width:300px;
+    height:450px;
+    position: absolute;
+    margin-top: 150px;
+    margin-left: 1100px;
+    border-radius: 14px;
+}
+dialog h3 {
+    display:inline-block;
+    margin-top: 15px;
+    margin-left: 75px;
+}
+.dialog__container {
+    display:flex;
+    width: 250px;
+    height: 350px;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 25px;
+    margin-left: 25px;
+    /*padding-left: 25px;*/
+    gap: 10px;
+}
+.dialog__container div {
+    background-color: rgba(242, 240, 241, 1);
+    border: 1px solid dimgray;
+    border-radius: 5px;
+
+}
+.dialog__container div p {
+    line-height: 0.8rem;
+}
+.dialog__container button {
+    width: 300px;
+}
+#cancel {
+    position: absolute;
+    margin-left:50px;
+    scale: 150%;
+    margin-top: 19px;
+
+}
+.poisk-container {
+    width: 567px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    background-color: dimgray;
+    padding-left: 10px;
+}
+#danya {
+    margin-top: 20px;
+    margin-left: 670px;
+}
+.button_none {
+    border: 0;
+    background-color: transparent;
+}
+
+.main__block img {
+    float:right;
+    margin-top: 86px;
+    margin-right: 81px;
+}
+.main__zvezda {
+    margin-right: 360px;
+    margin-top: 211px;
+    scale: 50%;
+    float:right;
+
+}
+.main__list-first-page {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 32px;
+
+    position: absolute;
+    width: 596px;
+    height: 74px;
+    left: 100px;
+    top: 607px;
+}
+.main__block h1 {
+    font-size: 64px;
+position: absolute;
+width: 577px;
+height: 173px;
+left: 100px;
+top: 227px;
+font-style: normal;
+font-weight: 700;
+
+line-height: 64px;
+display: flex;
+align-items: center;
+}
+.main__mem  {
+position: absolute;
+width: 545px;
+height: 33px;
+left: 100px;
+top: 442px;
+font-size: 16px;
+line-height: 22px;
+color: rgba(0, 0, 0, 0.6);
+}
+.main__block button {
+    width:210px;
+    height: 52px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 16px 54px;
+    gap: 12px;
+    position: absolute;
+    left: 100px;
+    top: 507px;
+    background: #000000;
+    border-radius: 62px;
+    color: #FFFFFF;
+
+}
+#main__brands {
+    background-image: url("../img/Rectangle 1.png");
+    width: 1440px;
+    height: 122px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+
+
+
+}
+.goods__container {
+    display:flex;
+    width:1200px;
+    height: 600px;
+    margin-left: 120px;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    z-index: 2;
+}
+.login__container {
+    display: flex;
+    height: 400px;
+    width: 600px;
+    background-color: #FFFFFF;
+    flex-direction: column;
+    justify-content: center;
+    margin-left:410px;
+    margin-top: 200px;
+    border-radius: 5px;
+    border: 2px solid black;
+
+    align-items:center;
+}
+
+
+#login {
+    scale: 120%;
+    width: 500px;
+}
+.back {
+    width:1440px;
+    height: 800px;
+    background-repeat: repeat;
+    background-image: url("../img/Group 1000006161.png");
+    margin-left:10px;
+
+}
