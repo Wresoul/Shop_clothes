@@ -14,14 +14,14 @@ from orders.models import Order, OrderItem
 from .forms import ProfileForm, UserLoginForm, UserRegistrationForm
 
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
+    queryset = User.objects.all().order_by('id')
     serializer_class = UserSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['username', 'email', 'phone_number']
     lookup_field = 'username'
 
     def get_permissions(self):
-        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+        if self.action in ['list', 'create', 'update', 'partial_update', 'destroy']:
             permission_classes = [IsAdminUser]
         else:
             permission_classes = [IsAuthenticated]
@@ -77,10 +77,10 @@ def profile(request):
     else:
         form = ProfileForm(instance=request.user)
     factory = APIRequestFactory()
-    api_request = factory.get(f'/api/users/{request.user.username}/')
+    api_request = factory.get(reverse('user-detail', kwargs={'username': request.user.username}))
     api_request.user = request.user
     view = UserViewSet.as_view({'get': 'retrieve'})
-    response = view(api_request)
+    response = view(api_request, username=request.user.username)
     user_data = response.data if response.status_code == 200 else {}
     context = {
         'title': 'Home - Кабинет',
@@ -91,10 +91,10 @@ def profile(request):
 
 def users_cart(request):
     factory = APIRequestFactory()
-    api_request = factory.get('/api/users/{request.user.username}/')
+    api_request = factory.get(reverse('user-detail', kwargs={'username': request.user.username}))
     api_request.user = request.user
     view = UserViewSet.as_view({'get': 'retrieve'})
-    response = view(api_request)
+    response = view(api_request, username=request.user.username)
     user_data = response.data if response.status_code == 200 else {}
     context = {
         'title': 'Home - Корзина',
