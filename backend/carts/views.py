@@ -1,4 +1,3 @@
-# Create your views here.
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 from rest_framework import viewsets, filters
