@@ -66,13 +66,10 @@ $(document).ready(function () {
 
         // делаем post запрос через ajax не перезагружая страницу
         $.ajax({
+            url: "{% url 'carts:cart_add' %}",
             type: "POST",
-            url: add_to_cart_url,
-            data: {
-                product_id: product_id,
-                csrfmiddlewaretoken: $("[name=csrfmiddlewaretoken]").val(),
-            },
-            success: function (data) {
+            data: { product_slug: "{{ el.slug }}", csrfmiddlewaretoken: "{{ csrf_token }}" },
+             success: function (data) {
                 // Сообщение
                 successMessage.html(data.message);
                 successMessage.fadeIn(400);
@@ -245,11 +242,3 @@ $(document).ready(function () {
         }
     });
         });
-
-
-
-
-
-
-
-
