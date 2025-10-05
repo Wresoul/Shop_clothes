@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.postgres',
     'debug_toolbar',
     'rest_framework',
+    'drf_yasg',
+    'django_redis',
 ]
 
 MIDDLEWARE = [
@@ -91,13 +93,36 @@ DATABASES = {
 MONGO_URI = env('MONGO_URI', default='mongodb://localhost:27017/')
 MONGO_DATABASE = env('MONGO_DATABASE', default='kafka_db')
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+    },
+}
+
 # Redis Cache
-# CACHES = {
-#     'default': {
-#         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-#         'LOCATION': env('REDIS_URL', default='redis://localhost:6379/1'),
-#     }
-# }
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': env('REDIS_URL', default='redis://localhost:6379/1'),
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'PASSWORD': env('REDIS_PASSWORD')
+        }
+    }
+}
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [

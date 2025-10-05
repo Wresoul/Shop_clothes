@@ -11,7 +11,7 @@
             <!-- Миниатюры -->
             <div class="col-md-4">
                 {% if product.photo %}
-                    <img src="{{ product.photo.url }}" alt="{{ product.name }}"
+                    <img src="{{ product.photo }}" alt="{{ product.name }}"
                      class="img-thumbnail" data-bs-toggle="modal" data-bs-target="#imageModal1">
                 {% else %}
                     <img src="{% static 'main/img/default.svg' %}" alt="{{ product.name }}"

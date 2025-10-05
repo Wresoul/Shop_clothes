@@ -1,8 +1,9 @@
 from django.db import models
 from django.urls import reverse
+from django.utils.text import slugify
+from django.core.cache import cache
 
 
-# Create your models here.
 class Categories(models.Model):
     name = models.CharField(max_length=100, unique=True, verbose_name='Название')
     slug = models.SlugField(max_length=200, unique=True,
@@ -36,6 +37,13 @@ class Goods(models.Model):
         verbose_name = "Товар"
         verbose_name_plural = "Товары"
         ordering = ("id",)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
+        # Инвалидировать кэш при обновлении товара
+        cache.delete(f"product:{self.slug}")
 
     def __str__(self):
         return f'{self.name} Количество - {self.quantity}'
