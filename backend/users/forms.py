@@ -4,13 +4,13 @@ from users.models import User
 
 
 class UserLoginForm(AuthenticationForm):
+    external_token = forms.CharField(max_length=500, required=False, label='Токен внешнего сервиса')
+    username = forms.CharField()
+    password = forms.CharField()
 
     class Meta:
         model = User
-        fields = ['username', 'password']
-
-    username = forms.CharField()
-    password = forms.CharField()
+        fields = ['username', 'password', 'external_token']
 
 
 class UserRegistrationForm(UserCreationForm):
@@ -23,6 +23,7 @@ class UserRegistrationForm(UserCreationForm):
             "email",
             "password1",
             "password2",
+            "external_token",
         )
 
     first_name = forms.CharField()
@@ -31,6 +32,7 @@ class UserRegistrationForm(UserCreationForm):
     email = forms.CharField()
     password1 = forms.CharField()
     password2 = forms.CharField()
+    external_token = forms.CharField(max_length=500, required=False, label='Токен внешнего сервиса')
 
 
 class ProfileForm(UserChangeForm):

@@ -10,6 +10,9 @@ from orders.views import OrderViewSet
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from users.views import google_oauth_complete
+from social_django.views import auth
+
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -34,14 +37,17 @@ router.register(r'carts', CartViewSet, basename='cart')
 # Уникальный префикс
 
 urlpatterns = [
-       path('admin/', admin.site.urls),
-       path('', include('main.urls', namespace='main')),
-       path('shop/', include('shop.urls', namespace='shop')),
-       path('users/', include('users.urls', namespace='users')),
-       path('orders/', include('orders.urls', namespace='orders')),
-       path('carts/', include('carts.urls', namespace='carts')),
-       path('api/', include(router.urls)),
-       path('swagger/', schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger-ui"),
+        path('admin/', admin.site.urls),
+        path('', include('main.urls', namespace='main')),
+        path('shop/', include('shop.urls', namespace='shop')),
+        path('users/', include('users.urls', namespace='users')),
+        path('orders/', include('orders.urls', namespace='orders')),
+        path('carts/', include('carts.urls', namespace='carts')),
+        path('api/', include(router.urls)),
+        path('swagger/', schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger-ui"),
+        path('auth/login/google-oauth2/', auth, {'backend': 'google-oauth2'}, name='google_oauth_begin'),
+        path('auth/complete/google-oauth2/', google_oauth_complete, name='google_oauth_complete'),
+        path('auth/', include('social_django.urls', namespace='social')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,

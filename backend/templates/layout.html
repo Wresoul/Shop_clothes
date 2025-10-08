@@ -17,7 +17,7 @@
 <body>
 <header>
     <div id="header__fixed-window">
-       <p>Sign up and get 20% off to your first order. <b>Sign Up Now</b> </p> 
+       <p>Sign up and get 20% off to your first order. <b>Sign Up Now</b> </p>
             {% if request.user.is_authenticated %}
             <img src="{% static 'main/img/Frame.png' %}" alt="">
             {% endif %}
@@ -62,7 +62,7 @@
                  <li class="header__ikonki_flex"><a href="{% url "users:login" %}"><button id="profile" class="button_none"><img class='header__ikonki_flex_object pointer"' src="{% static 'main/img/Avatar.svg' %}" alt="" ></button></a></li>
              {% endif %}
                 </ul>
-            
+
         </nav>
     </div>
 </header>
@@ -74,13 +74,13 @@
     <div class="poisk-container">
     <ul class="list">
       {% for el in news %}
-          
+
       <li>
       <div>
       <p> {{ el.name}} </p>
           </div>
       </li>
-          
+
         {% endfor %}
     </ul>
     </div>

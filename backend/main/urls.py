@@ -6,5 +6,5 @@ from . import views
 app_name = 'main'
 
 urlpatterns = [
-       path('', cache_page(60*5)(views.index), name='index'),
+       path('', views.index, name='index'),
 ]
