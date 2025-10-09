@@ -58,17 +58,17 @@ services:
       - dev
     restart: unless-stopped
 
-  #celery:
-    #build: ./backend
-    #container_name: bigcorp-celery
-    #env_file: .env
-    #depends_on:
-      #- db
-      #- redis
-   # volumes:
-      #- static_data:/app/static
-    #restart: always
-    #command: celery -A bigcorp worker --loglevel=info --beat
+  celery:
+    build: ./backend
+    container_name: bigcorp-celery
+    env_file: .env
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - static_data:/app/static
+    restart: always
+    command: celery -A bigcorp worker --loglevel=info --beat
 
   nginx:
     image: nginx:latest

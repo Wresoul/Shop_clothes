@@ -56,6 +56,7 @@ class Goods(models.Model):
 
     def sell_price(self):
         if self.discount:
-            return round(self.price - self.price * self.discount / 100, 2)
+            price_with_discount = round(self.price - self.price * self.discount / 100, 2)
+            return price_with_discount
 
         return self.price
