@@ -1,3 +1,5 @@
+import logging
+from django.core.exceptions import ValidationError
 from celery import shared_task
 from django.core.files.base import ContentFile
 from PIL import Image
@@ -10,29 +12,45 @@ from django.core.mail import send_mail
 from django.conf import settings
 from social_django.models import UserSocialAuth
 
-
-User = get_user_model()
-
+logger = logging.getLogger(__name__)
 
 @shared_task
 def process_user_image(user_id, image_name):
     try:
         user = User.objects.get(id=user_id)
-        if user.image:
-            # Открываем изображение
-            image_path = user.image.path
-            with Image.open(image_path) as img:
-                # Пример обработки: сжимаем изображение до ширины 300px
-                img.thumbnail((300, 300))
+        if not user.image:
+            logger.warning(f"No image found for user {user_id}")
+            return f"No image found for user {user_id}"
 
-                # Сохраняем обработанное изображение
-                buffer = io.BytesIO()
-                img.save(buffer, format=img.format or 'JPEG', quality=85)
-                file_name = os.path.basename(image_name)
-                user.image.save(f"processed_{file_name}", ContentFile(buffer.getvalue()), save=True)
+        # Открываем изображение
+        image_path = user.image.path
+        with Image.open(image_path) as img:
+            # Проверка формата изображения
+            if img.format not in ['JPEG', 'PNG', 'GIF']:
+                logger.error(f"Unsupported image format {img.format} for user {user_id}")
+                raise ValidationError("Неподдерживаемый формат изображения.")
 
+            # Сжимаем изображение до ширины 300px
+            img.thumbnail((300, 300))
+
+            # Сохраняем обработанное изображение
+            buffer = io.BytesIO()
+            img.save(buffer, format=img.format or 'JPEG', quality=85)
+            file_name = os.path.basename(image_name)
+            user.image.save(f"processed_{file_name}", ContentFile(buffer.getvalue()), save=True)
+            user.is_image_processed = True
+            user.save()
+
+        logger.info(f"Image processed successfully for user {user_id}")
         return f"Image processed for user {user_id}"
+    except User.DoesNotExist:
+        logger.error(f"User {user_id} not found")
+        return f"User {user_id} not found"
+    except ValidationError as e:
+        logger.error(f"Validation error processing image for user {user_id}: {str(e)}")
+        return f"Validation error for user {user_id}: {str(e)}"
     except Exception as e:
+        logger.error(f"Error processing image for user {user_id}: {str(e)}")
         return f"Error processing image for user {user_id}: {str(e)}"
 
 

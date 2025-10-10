@@ -11,6 +11,8 @@ from .models import User
 from .serializers import UserSerializer
 from carts.models import Cart
 from orders.models import Order, OrderItem
+from core.decorators import handle_exceptions
+from core.exceptions import APIValidationError, ResourceNotFoundError
 from .forms import ProfileForm, UserLoginForm, UserRegistrationForm
 from .tasks import process_user_image, verify_external_auth
 from social_django.utils import load_strategy, load_backend
@@ -96,19 +98,28 @@ def registration(request):
     return render(request, 'users/registration.html', context)
 
 @login_required
+@handle_exceptions(redirect_url='users:profile')
 def profile(request):
     if request.method == 'POST':
         form = ProfileForm(data=request.POST, instance=request.user, files=request.FILES)
         if form.is_valid():
             user = form.save()
             if 'image' in request.FILES:
+                if request.FILES['image'].size > 5 * 1024 * 1024:
+                    raise APIValidationError("Размер изображения не должен превышать 5MB.", status_code=400)
                 process_user_image.delay(user.id, request.FILES['image'].name)
                 messages.success(request, "Профиль обновлен, изображение обрабатывается")
             else:
                 messages.success(request, "Профиль успешно обновлен")
             return HttpResponseRedirect(reverse('users:profile'))
+        else:
+            # Не вызываем исключение, а передаем форму с ошибками в шаблон
+            logger.warning(f"Ошибка валидации формы для пользователя {request.user.username}: {form.errors}")
     else:
+        if not request.user.is_authenticated:
+            raise ResourceNotFoundError("Пользователь не найден.", status_code=404)
         form = ProfileForm(instance=request.user)
+
     factory = APIRequestFactory()
     api_request = factory.get(
         reverse('user-detail', kwargs={'username': request.user.username}),
@@ -121,7 +132,7 @@ def profile(request):
     orders = Order.objects.filter(user=request.user).prefetch_related(
         Prefetch('orderitem_set', queryset=OrderItem.objects.select_related('product'))
     )
-    logger.info(f"Profile view accessed, user: {request.user.username}, session: {request.session.session_key}, messages: {list(messages.get_messages(request))}, test_key: {request.session.get('test_key')}")
+    logger.info(f"Представление профиля открыто, пользователь: {request.user.username}, сессия: {request.session.session_key}")
     context = {
         'title': 'Home - Кабинет',
         'form': form,
