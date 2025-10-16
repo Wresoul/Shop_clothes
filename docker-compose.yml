@@ -7,11 +7,9 @@ volumes:
   kafka_data:
   mongo_data:
 
-
 networks:
   dev:
     driver: bridge
-
 
 services:
   db:
@@ -24,8 +22,6 @@ services:
     networks:
       - dev
 
-
-
   backend:
     build: ./backend
     container_name: shop.co-backend
@@ -33,11 +29,13 @@ services:
     volumes:
       - static_data:/app/static
       - media_data:/app/media
-
     ports:
       - 8000:8000
-    links:
+    depends_on:
       - db
+      - redis
+      - kafka
+      - mongodb
     restart: always
     command: sh -c "python3 manage.py makemigrations &&
                     python3 manage.py migrate &&
@@ -51,24 +49,31 @@ services:
   redis:
     image: redis:7.2.3-alpine
     container_name: shop.co-redis
+    hostname: redis
+    command: redis-server --requirepass ${REDIS_PASSWORD}  # Включаем пароль из .env
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}  # Не обязательно, но для ясности
     ports:
       - 6379:6379
-    hostname: redis
     networks:
       - dev
     restart: unless-stopped
 
   celery:
     build: ./backend
-    container_name: bigcorp-celery
+    container_name: shop.co-celery
     env_file: .env
     depends_on:
       - db
       - redis
+      - kafka
+      - mongodb
     volumes:
       - static_data:/app/static
     restart: always
-    command: celery -A bigcorp worker --loglevel=info --beat
+    command: celery -A DjangoProject2 worker --loglevel=info
+    networks:
+      - dev
 
   nginx:
     image: nginx:latest
@@ -82,6 +87,8 @@ services:
     ports:
       - 80:80
       - 443:443
+    depends_on:
+      - backend
     restart: always
     networks:
       - dev
@@ -95,17 +102,22 @@ services:
     networks:
       - dev
 
-
   kafka:
     image: confluentinc/cp-kafka:latest
+    container_name: djangoproject2-kafka
+    user: root  # Фикс прав: запуск от root
     environment:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: broker,controller
-      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
       KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_METADATA_LOG_DIR: /tmp/kraft-combined-logs  # Explicit для KRaft
       CLUSTER_ID: XyMqftPCQOqj9jFYtEIm5Q
     ports:
       - "9092:9092"
@@ -114,10 +126,14 @@ services:
       - kafka_data:/tmp/kraft-combined-logs
     networks:
       - dev
-
+    healthcheck:
+      test: [ "CMD", "nc", "-z", "localhost", "9092" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   mongodb:
-    image: mongodb/community-server:7.0-ubi
+    image: mongo:7.0
     ports:
       - "27017:27017"
     volumes:
@@ -125,33 +141,61 @@ services:
     networks:
       - dev
 
-
   message-processor:
     build:
       context: ./message-processor
+      dockerfile: Dockerfile
+    container_name: shop.co-message-processor
+    env_file: .env
     depends_on:
       - kafka
       - mongodb
-    environment:
-      - PYTHONUNBUFFERED=1
+    restart: always
+    command: python run_consumer.py
     networks:
       - dev
-
+    environment:
+      - PYTHONUNBUFFERED=1
 
   connect:
     image: confluentinc/cp-kafka-connect:latest
     ports:
       - "8083:8083"
     environment:
-      CONNECT_BOOTSTRAP_SERVERS: 'message-processor:9092'
+      CONNECT_BOOTSTRAP_SERVERS: 'kafka:9092'
       CONNECT_REST_ADVERTISED_HOST_NAME: 'connect'
       CONNECT_GROUP_ID: 'connect-group'
       CONNECT_CONFIG_STORAGE_TOPIC: 'connect-configs'
       CONNECT_OFFSET_STORAGE_TOPIC: 'connect-offsets'
       CONNECT_STATUS_STORAGE_TOPIC: 'connect-status'
-      CONNECT_KEY_CONVERTER: 'org.apache.message-processor.connect.json.JsonConverter'
-      CONNECT_VALUE_CONVERTER: 'org.apache.message-processor.connect.json.JsonConverter'
+      CONNECT_KEY_CONVERTER: 'org.apache.kafka.connect.json.JsonConverter'
+      CONNECT_VALUE_CONVERTER: 'org.apache.kafka.connect.json.JsonConverter'
       CONNECT_PLUGIN_PATH: '/usr/share/java,/usr/share/confluent-hub-components'
+      CONNECT_REST_PORT: 8083
     depends_on:
       - kafka
       - mongodb
+    networks:
+      - dev
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop:latest
+    depends_on:
+      - kafka
+    ports:
+      - "9000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: kafka:9092
+    networks:
+      - dev
+
+  mongo-express:
+    image: mongo-express:latest
+    depends_on:
+      - mongodb
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://mongodb:27017
+    networks:
+      - dev

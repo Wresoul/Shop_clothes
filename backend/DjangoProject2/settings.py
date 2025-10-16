@@ -1,6 +1,12 @@
 import os.path
-import environ
+import logging
 from pathlib import Path
+from pythonjsonlogger import jsonlogger
+import environ
+from broker.producer import send_to_kafka
+
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -8,6 +14,14 @@ ENV_DIR = Path(__file__).resolve().parent.parent.parent
 
 env = environ.Env()
 env.read_env(ENV_DIR / '.env')
+
+KAFKA_BOOTSTRAP_SERVERS = env('KAFKA_BOOTSTRAP_SERVERS', default='localhost:9192')
+KAFKA_TOPICS = {
+    'logs': env('KAFKA_TOPIC_LOGS', default='logs-topic'),
+    'orders': env('KAFKA_TOPIC_ORDERS', default='orders-topic'),
+    'carts': env('KAFKA_TOPIC_CARTS', default='carts-topic'),
+    'celery': env('KAFKA_TOPIC_CELERY', default='celery'),
+}
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -97,18 +111,49 @@ DATABASES = {
 MONGO_URI = env('MONGO_URI', default='mongodb://localhost:27017/')
 MONGO_DATABASE = env('MONGO_DATABASE', default='kafka_db')
 
+from broker.logging_handlers import KafkaLoggingHandler, NoKafkaFilter
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {name} {message}',
+            'style': '{',
+        },
+    },
+    'filters': {
+        'no_kafka': {
+            '()': NoKafkaFilter,  # Теперь из импорта
+        },
+    },
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
+            'level': 'INFO',
+            'formatter': 'verbose',
+        },
+        'kafka': {
+            'class': 'broker.logging_handlers.KafkaLoggingHandler',  # Реальный путь к классу
+            'level': 'INFO',
+            'filters': ['no_kafka'],
         },
     },
     'loggers': {
-        '': {
+        'broker.producer': {
             'handlers': ['console'],
-            'level': 'DEBUG',
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'broker': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        '': {  # Root
+            'handlers': ['console', 'kafka'],
+            'level': 'INFO',
+            'propagate': False,
         },
     },
 }
@@ -205,3 +250,4 @@ SOCIAL_AUTH_LOGIN_ERROR_URL = '/users/login/'
 SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {
     'redirect_uri': 'http://127.0.0.1:8000/auth/complete/google-oauth2/',
 }
+

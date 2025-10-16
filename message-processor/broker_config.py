@@ -2,7 +2,7 @@
 import json
 import os
 from confluent_kafka import Producer, Consumer, KafkaError
-from .mongo_utils import get_mongo_collection
+from mongo_utils import get_mongo_collection
 from dotenv import load_dotenv
 from datetime import datetime
 
@@ -17,7 +17,9 @@ def get_producer_config():
         'retries': 5,
         'batch.size': 16384,
         'linger.ms': 5,
-        'compression.type': 'gzip'
+        'compression.type': 'gzip',
+        'broker.address.family': 'v4',  # Force IPv4
+        'metadata.max.age.ms': 0  # Disable cache metadata
     }
 
 def get_consumer_config(group_id):
@@ -26,6 +28,7 @@ def get_consumer_config(group_id):
         'group.id': group_id,
         'auto.offset.reset': 'earliest',
         'enable.auto.commit': False,
+        'broker.address.family': 'v4',  # Force IPv4
     }
 
 def create_producer():

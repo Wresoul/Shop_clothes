@@ -12,6 +12,9 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.cache import cache
 from django.http import JsonResponse
+from broker.producer import send_to_kafka
+from django.conf import settings
+
 
 # Время жизни кэша (1 час)
 TTL = 3600
@@ -52,7 +55,7 @@ def product(request, product_slug):
 
 def cached_product(request, product_slug):
     key = f"product:{product_slug}"
-    logger.debug(f"Checking cache for key: {key}")
+    logger.debug(f"Checking cache for key: {key}", extra={'user': request.user.username if request.user.is_authenticated else 'anon', 'action': 'cache_check'})
     raw = cache.get(key)
     if raw is not None:
         logger.debug(f"Cache hit for {key}")
@@ -61,6 +64,8 @@ def cached_product(request, product_slug):
 
     logger.debug(f"Cache miss for {key}, querying database")
     try:
+        message = {'event_type': 'product_view', 'slug': product_slug, 'cache_hit': bool(raw)}
+        send_to_kafka(settings.KAFKA_TOPICS['logs'], message)
         product_data = get_product_data(product_slug)
         cache.set(key, json.dumps(product_data, cls=DjangoJSONEncoder), timeout=TTL)
         logger.debug(f"Cached data for {key}")
