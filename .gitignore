@@ -8,3 +8,5 @@ __pycache__
 .idea/
 .DS_Store
 backend/media/users_images/
+init-letsencrypt.sh
+.claude/
