@@ -5,3 +5,6 @@ db.sqlite3
 __pycache__
 .qodo
 .env
+.idea/
+.DS_Store
+backend/media/users_images/
