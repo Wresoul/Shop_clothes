@@ -20,7 +20,7 @@ schema_view = get_schema_view(
         default_version="v1",
         description="API for managing carts, orders, users, and goods",
         terms_of_service="https://example.com/terms/",
-        contact=openapi.Contact(email="radin-04@mail.ru"),
+        contact=openapi.Contact(email="support@example.com"),
         license=openapi.License(name="MIT License"),
     ),
     public=True,

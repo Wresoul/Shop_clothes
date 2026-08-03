@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from datetime import datetime
 
 
-load_dotenv('/Users/daniilradin/PycharmProjects/DjangoProject2/.env')
+load_dotenv()
 
 def get_producer_config():
     return {
