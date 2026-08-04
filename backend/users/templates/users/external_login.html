@@ -1,0 +1,28 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block main %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Внешняя аутентификация</h3>
+                </div>
+                <div class="card-body">
+                    <form id="external-login-form" method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="external_token" class="form-label">Токен от внешнего сервиса</label>
+                            <input type="text" class="form-control" id="external_token" name="external_token" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Проверить токен</button>
+                    </form>
+                    <div id="status-message" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{% endblock %}

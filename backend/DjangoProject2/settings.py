@@ -1,6 +1,12 @@
 import os.path
-import environ
+import logging
 from pathlib import Path
+from pythonjsonlogger import jsonlogger
+import environ
+from broker.producer import send_to_kafka
+
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -8,6 +14,14 @@ ENV_DIR = Path(__file__).resolve().parent.parent.parent
 
 env = environ.Env()
 env.read_env(ENV_DIR / '.env')
+
+KAFKA_BOOTSTRAP_SERVERS = env('KAFKA_BOOTSTRAP_SERVERS', default='localhost:9192')
+KAFKA_TOPICS = {
+    'logs': env('KAFKA_TOPIC_LOGS', default='logs-topic'),
+    'orders': env('KAFKA_TOPIC_ORDERS', default='orders-topic'),
+    'carts': env('KAFKA_TOPIC_CARTS', default='carts-topic'),
+    'celery': env('KAFKA_TOPIC_CELERY', default='celery'),
+}
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -33,6 +47,7 @@ INSTALLED_APPS = [
     'orders',
     'carts',
     'broker',
+    'core',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -42,6 +57,9 @@ INSTALLED_APPS = [
     'django.contrib.postgres',
     'debug_toolbar',
     'rest_framework',
+    'drf_yasg',
+    'django_redis',
+    'social_django',
 ]
 
 MIDDLEWARE = [
@@ -68,6 +86,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',  # Для social-auth
+                'social_django.context_processors.login_redirect',  # Для social-auth
             ],
         },
     },
@@ -91,13 +111,67 @@ DATABASES = {
 MONGO_URI = env('MONGO_URI', default='mongodb://localhost:27017/')
 MONGO_DATABASE = env('MONGO_DATABASE', default='kafka_db')
 
+from broker.logging_handlers import KafkaLoggingHandler, NoKafkaFilter
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {name} {message}',
+            'style': '{',
+        },
+    },
+    'filters': {
+        'no_kafka': {
+            '()': NoKafkaFilter,  # Теперь из импорта
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'level': 'INFO',
+            'formatter': 'verbose',
+        },
+        'kafka': {
+            'class': 'broker.logging_handlers.KafkaLoggingHandler',  # Реальный путь к классу
+            'level': 'INFO',
+            'filters': ['no_kafka'],
+        },
+    },
+    'loggers': {
+        'broker.producer': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'broker': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        '': {  # Root
+            'handlers': ['console', 'kafka'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}
+
 # Redis Cache
-# CACHES = {
-#     'default': {
-#         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-#         'LOCATION': env('REDIS_URL', default='redis://localhost:6379/1'),
-#     }
-# }
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': env('REDIS_URL', default='redis://localhost:6379/1'),
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'PASSWORD': env('REDIS_PASSWORD')
+        }
+    }
+}
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -142,6 +216,38 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
 # Stripe
-STRIPE_PUBLISHABLE_KEY = env('STRIPE_PUBLISHABLE_KEY')
-STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
-STRIPE_API_VERSION = env('STRIPE_API_VERSION')
+# STRIPE_PUBLISHABLE_KEY = env('STRIPE_PUBLISHABLE_KEY')
+# STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
+# STRIPE_API_VERSION = env('STRIPE_API_VERSION')
+
+# Celery settings
+CELERY_BROKER_URL = env('CELERY_BROKER_URL')  # Kafka broker address
+CELERY_RESULT_BACKEND = env('REDIS_URLWITHPASSWORD')  # Redis backend with password
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 10 * 60
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+CELERY_TASK_DEFAULT_QUEUE = 'celery'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+
+
+# Social Auth
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env('OATH_CLIENT_ID')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env('OATH_CLIENT_SECRET')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = ['email', 'profile']
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/users/profile/'
+SOCIAL_AUTH_LOGIN_ERROR_URL = '/users/login/'
+SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {
+    'redirect_uri': 'http://127.0.0.1:8000/auth/complete/google-oauth2/',
+}
+

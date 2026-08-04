@@ -1,4 +1,3 @@
-# message-processor/views.py
 from rest_framework import viewsets
 from rest_framework.response import Response
 from bson import ObjectId

@@ -84,7 +84,7 @@ Shop
                         {% else %}
                             <p><strong>{{ el.price }} $</strong></p>
                         {% endif %}
-
+        {% if el.quantity %}
      <a href="{% url "carts:cart_add" %}" class="btn add-to-cart"
                         data-product-slug="{{ el.slug }}"
    data-product-id="{{ el.id}}">
@@ -93,6 +93,9 @@ Shop
                             <img class="mx-1" src="{% static "main/img/cart-plus.svg" %}" alt="Catalog Icon"
                                  width="32" height="32">
          </a>
+        {% else %}
+            <p>Товар закончился</p>
+        {% endif %}
 
             </div>
         </div>

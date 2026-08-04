@@ -28,12 +28,4 @@ def q_search(query):
             stop_sel="</span>",
         )
     )
-    # result = result.annotate(
-    #     bodyline=SearchHeadline(
-    #         "description",
-    #         query,
-    #         start_sel='<span style="background-color: yellow;">',
-    #         stop_sel="</span>",
-    #     )
-    # )
     return result

@@ -7,8 +7,13 @@ from rest_framework import viewsets, filters
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from carts.models import Cart
 from orders.forms import CreateOrderForm
+from shop.models import Categories, Goods
 from orders.models import Order, OrderItem
 from .serializers import OrderSerializer
+from broker.producer import send_to_kafka
+from django.core.serializers.json import DjangoJSONEncoder
+from django.core.cache import cache
+from django.conf import settings
 
 
 
@@ -73,6 +78,10 @@ def create_order(request):
                         return redirect('users:profile')
             except ValidationError as e:
                 messages.success(request, str(e))
+                message = {'action': 'product_view', 'slug': product_slug,
+                           'user': request.user.username if request.user.is_authenticated else 'anon',
+                           'cache_hit': bool(raw)}
+                send_to_kafka(settings.KAFKA_TOPICS['orders'], message)
                 return redirect('carts:order')
     else:
         initial = {

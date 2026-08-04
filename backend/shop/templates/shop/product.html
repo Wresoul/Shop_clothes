@@ -11,7 +11,7 @@
             <!-- Миниатюры -->
             <div class="col-md-4">
                 {% if product.photo %}
-                    <img src="{{ product.photo.url }}" alt="{{ product.name }}"
+                    <img src="{{ product.photo }}" alt="{{ product.name }}"
                      class="img-thumbnail" data-bs-toggle="modal" data-bs-target="#imageModal1">
                 {% else %}
                     <img src="{% static 'main/img/default.svg' %}" alt="{{ product.name }}"
@@ -44,10 +44,14 @@
             <p class="card-text">Цена: <strong>{{ product.sell_price }} $</strong></p>
             <h5 class="card-title">{{ product.name }}</h5>
             <p class="card-text">{{ product.description }}</p>
-            <a href="{% url "carts:cart_add"  %}" class="btn btn-dark add-to-cart"
-            data-product-id="{{ product.id }}">
-            {% csrf_token %}
-            Добавить в корзину</a>
+            {% if product.quantity %}
+                <a href="{% url 'carts:cart_add' %}" class="btn btn-dark add-to-cart"
+                data-product-id="{{ product.id }}">
+                {% csrf_token %}
+                Добавить в корзину</a>
+            {% else %}
+                <p>Товар закончился</p>
+            {% endif %}
         </div>
     </div>
 </div>
